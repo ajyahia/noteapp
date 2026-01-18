@@ -1,5 +1,5 @@
-// const BASE_URL = "https://noteapp.foursw.com/api";
-const BASE_URL = "http://backend.test/api";
+const BASE_URL = "https://noteapp.foursw.com/api";
+// const BASE_URL = "http://backend.test/api";
 
 // Get token from localStorage
 const getToken = (): string | null => {
@@ -81,7 +81,7 @@ export const api = {
         error.message.includes("fetch")
       ) {
         throw new Error(
-          "لا يمكن الاتصال بالخادم. تأكد من أن الخادم يعمل على http://localhost:8000"
+          "لا يمكن الاتصال بالخادم. تأكد من أن الخادم يعمل على https://noteapp.foursw.com/api"
         );
       }
       throw error;
@@ -253,7 +253,7 @@ export const api = {
         error.message.includes("fetch")
       ) {
         throw new Error(
-          "لا يمكن الاتصال بالخادم. تأكد من أن الخادم يعمل على http://localhost:8080"
+          "لا يمكن الاتصال بالخادم. تأكد من أن الخادم يعمل على https://noteapp.foursw.com/api"
         );
       }
       throw error;

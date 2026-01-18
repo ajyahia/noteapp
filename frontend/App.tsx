@@ -243,6 +243,38 @@ const AppContent: React.FC = () => {
     [notes, showFeedback]
   );
 
+  const handleDeleteComment = useCallback(
+    async (noteId: string, key: string) => {
+      try {
+        const note = notes.find((n) => n.id.toString() === noteId);
+        if (!note) return;
+
+        const updatedComments = { ...(note.comments || {}) };
+        delete updatedComments[key];
+
+        const updatedNote = await api.updateNote(noteId, {
+          comments: updatedComments,
+        });
+
+        setNotes((prev) =>
+          prev.map((n) => (n.id.toString() === noteId ? updatedNote : n))
+        );
+        showFeedback(
+          "warning",
+          "تم حذف التعليق",
+          "تمت إزالة التعليق من الكلمة المحددة."
+        );
+      } catch (error: any) {
+        showFeedback(
+          "error",
+          "فشل الحذف",
+          error.message || "حدث خطأ أثناء حذف التعليق."
+        );
+      }
+    },
+    [notes, showFeedback]
+  );
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 transition-colors duration-300">
       {currentView === "LOGIN" && (
@@ -306,6 +338,7 @@ const AppContent: React.FC = () => {
           onBack={() => setCurrentView("DASHBOARD")}
           onLogout={handleLogout}
           onSaveComment={handleSaveComment}
+          onDeleteComment={handleDeleteComment}
           onUpdatePageBlocks={() => {}}
         />
       )}

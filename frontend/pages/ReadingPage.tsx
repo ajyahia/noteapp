@@ -11,6 +11,7 @@ interface ReadingPageProps {
   onBack: () => void;
   onLogout: () => void;
   onSaveComment: (noteId: string, key: string, comment: Comment) => void;
+  onDeleteComment: (noteId: string, key: string) => void;
   onUpdatePageBlocks: (noteId: string, pageIndex: number, newBlocks: NoteBlock[]) => void;
 }
 
@@ -19,7 +20,8 @@ const ReadingPage: React.FC<ReadingPageProps> = ({
   onEdit, 
   onBack, 
   onLogout, 
-  onSaveComment
+  onSaveComment,
+  onDeleteComment
 }) => {
   const [selectedWordKey, setSelectedWordKey] = useState<string | null>(null);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
@@ -43,6 +45,14 @@ const ReadingPage: React.FC<ReadingPageProps> = ({
   const switchToEditComment = () => {
     setIsCommentViewOpen(false);
     setIsCommentModalOpen(true);
+  };
+
+  const handleDeleteComment = () => {
+    if (selectedWordKey) {
+      onDeleteComment(note.id, selectedWordKey);
+      setIsCommentViewOpen(false);
+      setSelectedWordKey(null);
+    }
   };
 
   return (
@@ -182,6 +192,7 @@ const ReadingPage: React.FC<ReadingPageProps> = ({
         <CommentViewModal 
           comment={currentComment}
           onEdit={switchToEditComment}
+          onDelete={handleDeleteComment}
           onClose={() => setIsCommentViewOpen(false)}
         />
       )}
