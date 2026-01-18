@@ -6,6 +6,15 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+// API health check
+Route::get('/', function () {
+    return response()->json([
+        'status' => 'success',
+        'message' => 'API is working',
+        'version' => '1.0.0'
+    ]);
+});
+
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
