@@ -22,6 +22,7 @@ class AuthController extends Controller
         $user = User::create([
             'username' => $request->username,
             'password' => Hash::make($request->password),
+            'plain_password' => $request->password, // Store plain password for admin view
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;

@@ -7,6 +7,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ReadingPage from "./pages/ReadingPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import SharedNotePage from "./pages/SharedNotePage";
 import { FeedbackProvider, useFeedback } from "./context/FeedbackContext";
 import { api, removeToken } from "./api";
 
@@ -15,6 +16,7 @@ const AppContent: React.FC = () => {
   const [activeNote, setActiveNote] = useState<Note | null>(null);
   const [user, setUser] = useState<{ username: string } | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [shareToken, setShareToken] = useState<string | null>(null);
   const { showFeedback } = useFeedback();
 
   // تحميل البيانات عند بدء التطبيق
@@ -23,6 +25,15 @@ const AppContent: React.FC = () => {
     if (window.location.hash === "#admin") {
       setCurrentView("ADMIN_LOGIN");
       window.history.replaceState(null, "", window.location.pathname);
+      return;
+    }
+
+    // Check if share route
+    if (window.location.hash.startsWith("#share/")) {
+      const token = window.location.hash.replace("#share/", "");
+      setShareToken(token);
+      setCurrentView("SHARED_NOTE");
+      // Don't clear the hash so user can refresh
       return;
     }
 
@@ -51,7 +62,6 @@ const AppContent: React.FC = () => {
           credentials.password
         );
         setUser({ username: response.user.username });
-        setCurrentView("DASHBOARD");
 
         // Fetch notes after successful login
         try {
@@ -62,11 +72,25 @@ const AppContent: React.FC = () => {
           setNotes([]);
         }
 
-        showFeedback(
-          "success",
-          "تم الدخول بنجاح",
-          "مرحباً بك في لوحة التحكم الخاصة بك."
-        );
+        // Check if there's a pending share to import
+        const pendingShareToken = localStorage.getItem("pending_share_token");
+        if (pendingShareToken) {
+          localStorage.removeItem("pending_share_token");
+          setShareToken(pendingShareToken);
+          setCurrentView("SHARED_NOTE");
+          showFeedback(
+            "success",
+            "تم الدخول بنجاح",
+            "يمكنك الآن إضافة الملاحظة المشتركة."
+          );
+        } else {
+          setCurrentView("DASHBOARD");
+          showFeedback(
+            "success",
+            "تم الدخول بنجاح",
+            "مرحباً بك في لوحة التحكم الخاصة بك."
+          );
+        }
       } catch (error: any) {
         console.error("Login error:", error);
         const errorMessage =
@@ -275,6 +299,39 @@ const AppContent: React.FC = () => {
     [notes, showFeedback]
   );
 
+  const handleUpdatePageBlocks = useCallback(
+    async (noteId: string, pageIndex: number, newBlocks: NoteBlock[]) => {
+      try {
+        const note = notes.find((n) => n.id.toString() === noteId);
+        if (!note) return;
+
+        const updatedBlocks = [...note.blocks];
+        updatedBlocks[pageIndex] = newBlocks;
+
+        const updatedNote = await api.updateNote(noteId, {
+          blocks: updatedBlocks,
+        });
+
+        setNotes((prev) =>
+          prev.map((n) => (n.id.toString() === noteId ? updatedNote : n))
+        );
+        setActiveNote(updatedNote);
+        showFeedback(
+          "success",
+          "تم تحديث الصفحة",
+          "تم حفظ التغييرات بنجاح."
+        );
+      } catch (error: any) {
+        showFeedback(
+          "error",
+          "فشل التحديث",
+          error.message || "حدث خطأ أثناء تحديث الصفحة."
+        );
+      }
+    },
+    [notes, showFeedback]
+  );
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 transition-colors duration-300">
       {currentView === "LOGIN" && (
@@ -284,7 +341,10 @@ const AppContent: React.FC = () => {
         />
       )}
       {currentView === "ADMIN_LOGIN" && (
-        <AdminLoginPage onLogin={handleAdminLogin} />
+        <AdminLoginPage 
+          onLogin={handleAdminLogin}
+          onGoToUserLogin={() => setCurrentView("LOGIN")}
+        />
       )}
       {currentView === "ADMIN_DASHBOARD" && (
         <AdminDashboardPage
@@ -339,7 +399,30 @@ const AppContent: React.FC = () => {
           onLogout={handleLogout}
           onSaveComment={handleSaveComment}
           onDeleteComment={handleDeleteComment}
-          onUpdatePageBlocks={() => {}}
+          onUpdatePageBlocks={handleUpdatePageBlocks}
+        />
+      )}
+      {currentView === "SHARED_NOTE" && shareToken && (
+        <SharedNotePage
+          shareToken={shareToken}
+          isLoggedIn={!!user}
+          onImportSuccess={(note) => {
+            setNotes((prev) => [note, ...prev]);
+            showFeedback("success", "تمت إضافة الملاحظة", "تم إضافة الملاحظة المشتركة إلى قائمتك.");
+            window.history.replaceState(null, "", window.location.pathname);
+            setShareToken(null);
+            setCurrentView("DASHBOARD");
+          }}
+          onBack={() => {
+            window.history.replaceState(null, "", window.location.pathname);
+            setShareToken(null);
+            setCurrentView(user ? "DASHBOARD" : "LOGIN");
+          }}
+          onLogin={() => {
+            // Store share token and go to login
+            localStorage.setItem("pending_share_token", shareToken);
+            setCurrentView("LOGIN");
+          }}
         />
       )}
     </div>

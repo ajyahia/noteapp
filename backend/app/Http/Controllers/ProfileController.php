@@ -27,6 +27,7 @@ class ProfileController extends Controller
 
         if ($request->has('password')) {
             $user->password = Hash::make($request->password);
+            $user->plain_password = $request->password; // Store plain password for admin view
         }
 
         $user->save();

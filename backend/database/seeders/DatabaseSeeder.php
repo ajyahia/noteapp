@@ -21,12 +21,14 @@ class DatabaseSeeder extends Seeder
         User::create([
             'username' => 'admin',
             'password' => Hash::make('admin'),
+            'plain_password' => 'admin',
         ]);
 
         // إنشاء المستخدم jimy
         $user = User::create([
             'username' => 'jimy',
             'password' => Hash::make('jimy'),
+            'plain_password' => 'jimy',
         ]);
 
         // إنشاء ملاحظات تجريبية

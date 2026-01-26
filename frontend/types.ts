@@ -22,7 +22,13 @@ export interface Note {
   comments?: Record<string, Comment>; // key format: "pageIndex-wordIndex"
 }
 
-export type View = 'LOGIN' | 'DASHBOARD' | 'ADD_NOTE' | 'PROFILE' | 'READ_NOTE' | 'ADMIN_LOGIN' | 'ADMIN_DASHBOARD';
+export type View = 'LOGIN' | 'DASHBOARD' | 'ADD_NOTE' | 'PROFILE' | 'READ_NOTE' | 'ADMIN_LOGIN' | 'ADMIN_DASHBOARD' | 'SHARED_NOTE';
+
+export interface SharedNoteData {
+  note: Note;
+  shared_by: string;
+  shared_at: string;
+}
 
 export interface UserAccount {
   id: string;

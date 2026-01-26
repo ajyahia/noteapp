@@ -50,7 +50,7 @@ const FeedbackToast: React.FC<FeedbackToastProps> = ({ feedback, onRemove }) => 
   const config = configs[feedback.type];
 
   return (
-    <div className={`pointer-events-auto flex gap-4 p-4 rounded-2xl border backdrop-blur-md shadow-2xl animate-toast-in ${config.bg} ${config.border}`}>
+    <div className={`pointer-events-auto flex gap-4 p-4 rounded-xl border backdrop-blur-md shadow-2xl animate-toast-in ${config.bg} ${config.border}`}>
       <div className="flex-shrink-0 mt-0.5">{config.icon}</div>
       <div className="flex-1 text-right">
         <h4 className="text-sm font-bold text-white">{feedback.title}</h4>
@@ -58,10 +58,11 @@ const FeedbackToast: React.FC<FeedbackToastProps> = ({ feedback, onRemove }) => 
       </div>
       <button 
         onClick={onRemove}
-        className="text-slate-500 hover:text-white transition-colors"
+        className="text-slate-300 hover:text-white transition-colors flex-shrink-0"
+        aria-label="إغلاق"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
       <style>{`

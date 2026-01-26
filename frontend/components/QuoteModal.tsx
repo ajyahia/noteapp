@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 interface QuoteModalProps {
   initialContent?: string;
@@ -24,57 +24,80 @@ const QuoteModal: React.FC<QuoteModalProps> = ({ initialContent = '', initialCol
   const isEditing = initialContent !== '';
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-300">
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <div 
-        className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-[2.5rem] shadow-2xl p-8 md:p-10 animate-in zoom-in-95 duration-200"
+        className="w-full max-w-sm bg-slate-900/95 backdrop-blur-xl rounded-xl shadow-2xl overflow-hidden border border-slate-800/50"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-bold text-white mb-8 text-right">
-          {isEditing ? 'تعديل الاقتباس' : 'إضافة اقتباس'}
-        </h2>
+        {/* البار العلوي */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800/50">
+          <button 
+            onClick={onClose} 
+            className="p-1.5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <h2 className="text-slate-200 font-medium text-sm">
+            {isEditing ? 'تعديل الاقتباس' : 'إضافة اقتباس'}
+          </h2>
+          <div className="w-7"></div>
+        </div>
 
-        <div className="space-y-6 text-right">
-          <div className="space-y-2">
+        <div className="px-3 py-3 space-y-3 text-right">
+          <div>
+            <label className="text-xs text-slate-500 mb-1 block">نص الاقتباس</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="اكتب نص الاقتباس هنا..."
-              rows={4}
-              className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-6 py-4 text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all text-right resize-none text-lg"
+              placeholder="اكتب نص الاقتباس..."
+              rows={3}
+              className="w-full bg-slate-800/50 rounded-lg px-3 py-2.5 text-white text-sm placeholder-slate-600 focus:outline-none focus:bg-slate-800 transition-colors text-right resize-none"
             />
           </div>
 
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-slate-400 mr-2 block">اختر لونا للاقتباس</label>
-            <div className="flex flex-row-reverse gap-4 justify-start px-2 py-2">
+          <div>
+            <label className="text-xs text-slate-500 mb-2 block">لون الاقتباس</label>
+            <div className="flex justify-center gap-2">
               {COLORS.map((color) => (
                 <button
                   key={color}
                   onClick={() => setSelectedColor(color)}
                   style={{ backgroundColor: color }}
-                  className={`
-                    w-10 h-10 rounded-full transition-all duration-200 transform hover:scale-110 active:scale-95
-                    ${selectedColor === color ? 'ring-4 ring-white/20 scale-110 border-2 border-white' : 'border-2 border-transparent'}
-                  `}
+                  className={`w-8 h-8 rounded-full transition-all ${
+                    selectedColor === color 
+                      ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-900 scale-110' 
+                      : 'opacity-70 hover:opacity-100'
+                  }`}
                 />
               ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-10 flex gap-4 flex-row-reverse">
+        <div className="px-3 pb-3 flex gap-2 justify-center">
+          <button
+            onClick={onClose}
+            className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition-colors"
+            title="إلغاء"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
           <button
             onClick={() => onSave(content, selectedColor)}
             disabled={!content.trim()}
-            className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold py-4 rounded-2xl transition-all shadow-lg active:scale-95"
+            className="p-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+            title={isEditing ? 'حفظ' : 'إضافة'}
           >
-            {isEditing ? 'حفظ التعديلات' : 'إضافة'}
-          </button>
-          <button
-            onClick={onClose}
-            className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-4 rounded-2xl transition-all border border-slate-700 active:scale-95"
-          >
-            إلغاء
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
           </button>
         </div>
       </div>

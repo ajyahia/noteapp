@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import Taskbar from '../components/Taskbar';
+import PageHeader from '../components/PageHeader';
 
 interface ProfilePageProps {
   user: {
@@ -27,19 +28,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onSave, onCancel, onLog
   };
 
   return (
-    <div className="min-h-screen flex flex-col max-w-4xl mx-auto px-4 py-8 pb-32">
-      {/* رأس الصفحة مع زر الرجوع */}
-      <header className="flex items-center justify-between mb-12 animate-fade-in">
-        <button 
-          onClick={onCancel}
-          className="text-slate-400 hover:text-white flex items-center gap-2 transition-colors group"
-        >
-          <svg className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-          <span>رجوع</span>
-        </button>
-      </header>
+    <div className="min-h-screen flex flex-col max-w-4xl mx-auto px-4 py-8 pb-52">
+      <PageHeader
+        leftAction={{
+          onClick: onCancel,
+          label: 'رجوع'
+        }}
+        className="mb-6 md:mb-8"
+      />
 
       {/* محتوى الصفحة */}
       <div className="flex-1 space-y-12 text-right">
@@ -58,7 +54,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onSave, onCancel, onLog
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="أدخل اسم المستخدم"
-                className="w-full bg-slate-900/30 border border-slate-800 rounded-2xl px-6 py-4 text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/50 focus:border-blue-500 transition-all text-right text-lg shadow-inner"
+                className="w-full bg-slate-900/30 border border-slate-800 rounded-xl px-6 py-4 text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/50 focus:border-blue-500 transition-all text-right text-lg shadow-inner"
               />
             </div>
           </div>
@@ -72,7 +68,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onSave, onCancel, onLog
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-900/30 border border-slate-800 rounded-2xl px-6 py-4 text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/50 focus:border-blue-500 transition-all text-right text-lg shadow-inner"
+                className="w-full bg-slate-900/30 border border-slate-800 rounded-xl px-6 py-4 text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/50 focus:border-blue-500 transition-all text-right text-lg shadow-inner"
               />
               <button
                 type="button"
@@ -103,7 +99,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onSave, onCancel, onLog
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-slate-900/30 border border-slate-800 rounded-2xl px-6 py-4 text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/50 focus:border-blue-500 transition-all text-right text-lg shadow-inner"
+                className="w-full bg-slate-900/30 border border-slate-800 rounded-xl px-6 py-4 text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/50 focus:border-blue-500 transition-all text-right text-lg shadow-inner"
               />
               <button
                 type="button"
@@ -130,12 +126,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onSave, onCancel, onLog
       <Taskbar onLogout={onLogout}>
         <button
           onClick={handleSave}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white px-8 py-2.5 rounded-full transition-all shadow-lg shadow-blue-900/40 hover:scale-105"
+          className="bg-blue-600 hover:bg-blue-500 active:scale-95 text-white p-3 rounded-xl transition-all shadow-lg"
+          title="حفظ التعديلات"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          <span className="font-bold">حفظ التعديلات</span>
         </button>
       </Taskbar>
 

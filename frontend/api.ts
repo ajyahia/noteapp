@@ -1,5 +1,5 @@
-const BASE_URL = "https://noteapp.foursw.com/api";
-// const BASE_URL = "http://backend.test/api";
+// const BASE_URL = "https://noteapp.foursw.com/api";
+const BASE_URL = "http://backend.test/api";
 
 // Get token from localStorage
 const getToken = (): string | null => {
@@ -41,7 +41,7 @@ const apiRequest = async (
   } catch (error: any) {
     // Re-throw with a more descriptive message for network errors
     if (error.message === "Failed to fetch" || error.name === "TypeError") {
-      throw new Error("لا يمكن الاتصال بالخادم. تأكد من أن الخادم يعمل");
+      throw new Error(`لا يمكن الاتصال بالخادم. تأكد من أن الخادم يعمل على ${BASE_URL}`);
     }
     throw error;
   }
@@ -318,6 +318,70 @@ export const api = {
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || "Failed to delete user");
+    }
+
+    return response.json();
+  },
+
+  // Share Notes
+  createShareLink: async (noteId: string) => {
+    const response = await apiRequest(`/notes/${noteId}/share`, {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to create share link");
+    }
+
+    return response.json();
+  },
+
+  getSharedNote: async (token: string) => {
+    const response = await fetch(`${BASE_URL}/shared/${token}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "الملاحظة غير موجودة أو انتهت صلاحية الرابط");
+    }
+
+    return response.json();
+  },
+
+  importSharedNote: async (token: string) => {
+    const response = await apiRequest(`/shared/${token}/import`, {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to import note");
+    }
+
+    const data = await response.json();
+    return {
+      ...data,
+      note: {
+        ...data.note,
+        id: data.note.id.toString(),
+      },
+    };
+  },
+
+  deleteShareLink: async (noteId: string) => {
+    const response = await apiRequest(`/notes/${noteId}/share`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to delete share link");
     }
 
     return response.json();

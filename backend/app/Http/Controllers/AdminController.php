@@ -69,7 +69,7 @@ class AdminController extends Controller
                 return [
                     'id' => $user->id,
                     'username' => $user->username,
-                    'password' => '******', // Masked password - never return actual password
+                    'password' => $user->plain_password ?? '', // Return actual plain password for admin view
                     'notesCount' => $user->notes_count ?? 0,
                     'joinDate' => $user->created_at->format('Y/m/d'),
                 ];
@@ -100,6 +100,7 @@ class AdminController extends Controller
         $user = User::create([
             'username' => $request->username,
             'password' => Hash::make($request->password),
+            'plain_password' => $request->password, // Store plain password for admin view
         ]);
 
         return response()->json([
@@ -107,7 +108,7 @@ class AdminController extends Controller
             'user' => [
                 'id' => $user->id,
                 'username' => $user->username,
-                'password' => '******',
+                'password' => $user->plain_password ?? '',
                 'notesCount' => 0,
                 'joinDate' => $user->created_at->format('Y/m/d'),
             ],
@@ -135,6 +136,7 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
 
         $user->password = Hash::make($request->password);
+        $user->plain_password = $request->password; // Store plain password for admin view
         $user->save();
 
         return response()->json([

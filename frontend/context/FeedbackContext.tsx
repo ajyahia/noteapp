@@ -23,11 +23,10 @@ export const FeedbackProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     
     setFeedbacks((prev) => [...prev, newFeedback]);
 
-    if (type !== 'error') {
-      setTimeout(() => {
-        removeFeedback(id);
-      }, 5000);
-    }
+    // جميع الإشعارات تختفي بعد 2 ثانية
+    setTimeout(() => {
+      removeFeedback(id);
+    }, 2000);
   }, [removeFeedback]);
 
   return (

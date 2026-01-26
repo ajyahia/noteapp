@@ -7,9 +7,10 @@ interface NoteCardProps {
   onEdit: () => void;
   onRead: () => void;
   onDelete: (id: string) => void;
+  onShare: () => void;
 }
 
-const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onRead, onDelete }) => {
+const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onRead, onDelete, onShare }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +26,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onRead, onDelete }) =
   }, []);
 
   return (
-    <div className="group bg-slate-900/40 border border-slate-800/60 p-6 rounded-2xl hover:bg-slate-900/60 hover:border-slate-700 transition-all duration-300 shadow-sm relative overflow-visible flex flex-col h-full">
+    <div className="group bg-slate-900/40 border border-slate-800/60 p-6 rounded-xl hover:bg-slate-900/60 hover:border-slate-700 transition-all duration-300 shadow-sm relative overflow-visible flex flex-col h-full">
       {/* رأس البطاقة - العنوان والقائمة */}
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-lg font-bold text-slate-100 group-hover:text-blue-400 transition-colors line-clamp-1">
@@ -58,6 +59,18 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onRead, onDelete }) =
                 تعديل
               </button>
               <button 
+                className="w-full text-right px-4 py-3 text-sm text-slate-200 hover:bg-slate-700 flex items-center gap-3 transition-colors"
+                onClick={() => {
+                  onShare();
+                  setIsMenuOpen(false);
+                }}
+              >
+                <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                مشاركة
+              </button>
+              <button 
                 className="w-full text-right px-4 py-3 text-sm text-red-400 hover:bg-red-950/30 flex items-center gap-3 transition-colors"
                 onClick={() => {
                   onDelete(note.id);
@@ -88,9 +101,13 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onEdit, onRead, onDelete }) =
         </span>
         <button 
           onClick={onRead}
-          className="text-blue-500 hover:text-blue-400 text-sm font-semibold transition-all hover:translate-x-1"
+          className="text-blue-500 hover:text-blue-400 transition-all hover:translate-x-1 p-1.5"
+          title="قراءة"
         >
-          قراءة
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
         </button>
       </div>
     </div>

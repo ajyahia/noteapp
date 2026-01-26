@@ -2,6 +2,8 @@ import React, { useState, useMemo } from "react";
 import { Note } from "../types";
 import NoteCard from "../components/NoteCard";
 import Taskbar from "../components/Taskbar";
+import PageHeader from "../components/PageHeader";
+import ShareModal from "../components/ShareModal";
 
 // Add slide-in animation keyframes
 const slideInStyle = `
@@ -40,6 +42,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [shareNote, setShareNote] = useState<Note | null>(null);
 
   // Helper function to get initials from username
   const getInitials = (name: string): string => {
@@ -100,36 +103,37 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
   return (
     <>
       <style>{slideInStyle}</style>
-      <div className="relative pb-24 pt-8 px-4 md:px-8 max-w-7xl mx-auto">
-        <header className="flex items-center justify-between mb-10 border-b border-slate-800 pb-8">
-          <div>
-            <h1 className="text-4xl font-black text-white mb-2 tracking-tight">
-              ملاحظاتي
-            </h1>
-            <p className="text-slate-500 text-sm font-medium flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-              {searchQuery.trim()
-                ? `تم العثور على ${filteredNotes.length} من ${notes.length} ملاحظة`
-                : `لديك ${notes.length} ملاحظات محفوظة في سجلاتك`}
-            </p>
-          </div>
-
-          <div className="flex gap-4">
-            <button
-              onClick={onGoToProfile}
-              className="group relative flex items-center justify-center"
-            >
-              <div className="absolute -inset-1 bg-gradient-to-tr from-blue-600 via-indigo-500 to-violet-600 rounded-2xl blur-md opacity-25 group-hover:opacity-60 transition duration-500"></div>
-              <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-violet-600 p-[2.5px] shadow-2xl transition-all duration-300 group-hover:scale-110 group-active:scale-95">
-                <div className="w-full h-full rounded-[13px] bg-slate-950 flex items-center justify-center overflow-hidden transition-colors duration-300 group-hover:bg-transparent">
-                  <span className="text-xl font-black tracking-tighter bg-gradient-to-tr from-blue-300 to-indigo-200 bg-clip-text text-transparent group-hover:text-white transition-all duration-300">
-                    {getInitials(user.username)}
-                  </span>
-                </div>
+      <div className="relative pb-52 pt-8 px-4 md:px-8 max-w-7xl mx-auto">
+        <PageHeader
+          className="mb-4 md:mb-6"
+          sticky={true}
+        >
+          <div className="flex items-center justify-between w-full">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 md:gap-3 mb-1">
+                <h1 className="text-xl md:text-2xl font-bold text-white tracking-tight truncate">
+                  ملاحظاتي
+                </h1>
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse flex-shrink-0"></span>
               </div>
-            </button>
+              <p className="text-slate-400 text-xs md:text-sm font-medium truncate">
+                {searchQuery.trim()
+                  ? `${filteredNotes.length} من ${notes.length}`
+                  : `${notes.length} ملاحظة`}
+              </p>
+            </div>
+
+          <button
+            onClick={onGoToProfile}
+            className="group flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-lg bg-slate-800/80 border border-slate-700/50 hover:border-blue-500/50 transition-all shrink-0"
+            title="الملف الشخصي"
+          >
+            <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
           </div>
-        </header>
+        </PageHeader>
 
         {notes.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -190,6 +194,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
                 onEdit={() => onEditNote(note)}
                 onRead={() => onReadNote(note)}
                 onDelete={onDeleteNote}
+                onShare={() => setShareNote(note)}
               />
             ))}
           </div>
@@ -201,7 +206,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
             {!isSearchOpen ? (
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="flex items-center justify-center bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 hover:text-white p-3 rounded-2xl transition-all shadow-lg"
+                className="flex items-center justify-center bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 hover:text-white p-3 rounded-xl transition-all shadow-lg"
                 title="بحث"
               >
                 <svg
@@ -220,7 +225,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
               </button>
             ) : (
               <div
-                className="relative flex items-center bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-3 transition-all duration-500 shadow-lg min-w-[200px] md:min-w-[300px]"
+                className="relative flex items-center bg-slate-800/60 backdrop-blur-md border border-white/10 rounded-xl px-4 py-3 transition-all duration-500 shadow-lg min-w-[200px] md:min-w-[300px]"
                 style={{
                   animation: "slideIn 0.5s ease-out",
                 }}
@@ -286,27 +291,22 @@ const DashboardPage: React.FC<DashboardPageProps> = ({
           {/* Add Note Button */}
           <button
             onClick={onAddNote}
-            className="group relative flex items-center gap-2 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white p-3 md:px-8 md:py-3 rounded-2xl md:rounded-full transition-all shadow-xl shadow-blue-900/40 overflow-hidden"
+            className="bg-blue-600 hover:bg-blue-500 active:scale-95 text-white p-3 rounded-xl transition-all shadow-lg"
+            title="إضافة ملاحظة"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-            <svg
-              className="w-7 h-7 md:w-6 md:h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M12 4v16m8-8H4"
-              />
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <span className="font-black text-lg hidden sm:inline">
-              إضافة ملاحظة
-            </span>
           </button>
         </Taskbar>
+
+        {shareNote && (
+          <ShareModal
+            noteId={shareNote.id}
+            noteTitle={shareNote.title}
+            onClose={() => setShareNote(null)}
+          />
+        )}
       </div>
     </>
   );
